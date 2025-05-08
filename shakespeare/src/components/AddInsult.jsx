@@ -1,11 +1,16 @@
 import React, { useState } from 'react'
 
-const AddInsult = () => {
+const AddInsult = ({ onAdd }) => {
   const [insult, setInsult] = useState('');
   const [play, setPlay] = useState('');
 
   const handleSubmit = e => {
     e.preventDefault();
+    if (insult && play) {
+      onAdd({ insult, play });
+      setInsult('');
+      setPlay('');
+    }
     console.log({
       insult: insult,
       play: play
@@ -34,6 +39,6 @@ const AddInsult = () => {
       </form>
     </>
   );
-}
+};
 
 export default AddInsult;

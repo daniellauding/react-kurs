@@ -31,18 +31,37 @@ const products = [
 
 ];
 
-function App() {  // const [count, setCount] = useState(0)
+function App() {
+
+  const [cartItems, setCartItems] = useState([]);
+
+  const addToCart = product => {
+    // Kontrollerar om produkten redan finns i kundvagnen
+    const alreadyInCart = cartItems.some(item => item.id === product.id);
+
+    if (!alreadyInCart) {
+      // Skapar en ny array med den befintliga kundvagnen plus den nya produkten
+      setCartItems([...cartItems, product]);
+    }
+    // Om produkten redan finns i kundvagnen, gör ingenting
+  };
+
+  const removeFromCart = productId => {
+    setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
+  };
 
   return (
     <>
-      <Header />
+      <Header cartItems={cartItems} removeFromCart={removeFromCart} />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
         {products.map((product, index) => (
           <Product
+            key={index}
             id={index}
             title={product.title}
             author={product.author}
             description={product.description}
+            addToCart={() => addToCart({ id: index, ...product })}
           />
         ))}
       </div>

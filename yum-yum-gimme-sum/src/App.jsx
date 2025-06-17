@@ -1,9 +1,9 @@
 import { Routes, Route } from 'react-router-dom'
-import MenuPage from './pages/MenuPage'
-import CartPage from './pages/CartPage'
-import MainLayout from './layouts/MainLayout'
-import OrderConfirmationPage from './pages/OrderConfirmationPage'
-import ReceiptPage from './pages/ReceiptPage'
+import MainLayout from '@/layouts/MainLayout'
+import MenuPage from '@/pages/MenuPage'
+import CartPage from '@/pages/CartPage'
+import OrderConfirmationPage from '@/pages/OrderConfirmationPage'
+import ReceiptPage from '@/pages/ReceiptPage'
 
 function App() {
   return (
@@ -18,4 +18,4 @@ function App() {
   )
 }
 
-export default App 
+export default App

@@ -1,12 +1,13 @@
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { updateQuantity, removeFromCart, clearCart } from '@/store/cartSlice'
+import { updateQuantity, removeFromCart, clearCart } from '../store/cartSlice'
+import { useCartSummary } from '../hooks/useCart'
 import { MinusIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 
 function CartPage() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { items, total } = useSelector(state => state.cart)
+  const { items, total, isEmpty } = useCartSummary()
 
   const handleUpdateQuantity = (id, quantity) => {
     dispatch(updateQuantity({ id, quantity }))
@@ -21,12 +22,12 @@ function CartPage() {
   }
 
   const handleCheckout = () => {
-    if (items.length > 0) {
+    if (!isEmpty) {
       navigate('/order')
     }
   }
 
-  if (items.length === 0) {
+  if (isEmpty) {
     return (
       <div className="container py-16">
         <div className="text-center">
@@ -75,7 +76,7 @@ function CartPage() {
                     {item.description}
                   </p>
                   <p className="text-[#f97316] font-bold">
-                    ${item.price}
+                    {item.price} kr
                   </p>
                 </div>
 
@@ -112,7 +113,7 @@ function CartPage() {
 
                 <div className="text-right">
                   <p className="text-lg font-bold text-gray-800">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    {(item.price * item.quantity).toFixed(2)} kr
                   </p>
                 </div>
               </div>
@@ -128,21 +129,21 @@ function CartPage() {
             <div className="space-y-2 mb-4">
               <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal</span>
-                <span className="font-semibold">${total.toFixed(2)}</span>
+                <span className="font-semibold">{total.toFixed(2)} kr</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Delivery Fee</span>
-                <span className="font-semibold">$3.99</span>
+                <span className="font-semibold">39 kr</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Tax</span>
-                <span className="font-semibold">${(total * 0.08).toFixed(2)}</span>
+                <span className="font-semibold">{(total * 0.08).toFixed(2)} kr</span>
               </div>
               <hr className="my-2" />
               <div className="flex justify-between text-lg font-bold">
                 <span>Total</span>
                 <span className="text-[#f97316]">
-                  ${(total + 3.99 + (total * 0.08)).toFixed(2)}
+                  {(total + 39 + (total * 0.08)).toFixed(2)} kr
                 </span>
               </div>
             </div>

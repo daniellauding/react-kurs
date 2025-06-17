@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
-import { clearCurrentOrder } from '@/store/orderSlice'
+import { clearCurrentOrder } from '../store/orderSlice'
 import { CheckCircleIcon, PrinterIcon, ClockIcon } from '@heroicons/react/24/outline'
 
 function ReceiptPage() {
@@ -52,7 +52,7 @@ function ReceiptPage() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-800">Order Status</h2>
             <span className="bg-[#ffedd5] text-[#9a3412] px-3 py-1 rounded-full text-sm font-medium">
-              {currentOrder.status === 'preparing' ? 'Preparing' : currentOrder.status}
+              {currentOrder.status === 'confirmed' ? 'Preparing' : currentOrder.status}
             </span>
           </div>
           
@@ -103,12 +103,12 @@ function ReceiptPage() {
                     <div>
                       <p className="font-medium">{item.name}</p>
                       <p className="text-sm text-gray-600">
-                        ${item.price} × {item.quantity}
+                        {item.price} kr × {item.quantity}
                       </p>
                     </div>
                   </div>
                   <p className="font-semibold">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    {(item.price * item.quantity).toFixed(2)} kr
                   </p>
                 </div>
               ))}
@@ -120,20 +120,20 @@ function ReceiptPage() {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal</span>
-                <span>${(currentOrder.total - 3.99 - ((currentOrder.total - 3.99) * 0.08)).toFixed(2)}</span>
+                <span>{(currentOrder.total - 39 - ((currentOrder.total - 39) * 0.08)).toFixed(2)} kr</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Delivery Fee</span>
-                <span>$3.99</span>
+                <span>39 kr</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Tax</span>
-                <span>${((currentOrder.total - 3.99) * 0.08).toFixed(2)}</span>
+                <span>{((currentOrder.total - 39) * 0.08).toFixed(2)} kr</span>
               </div>
               <hr className="my-2" />
               <div className="flex justify-between text-lg font-bold">
                 <span>Total</span>
-                <span className="text-[#f97316]">${currentOrder.total.toFixed(2)}</span>
+                <span className="text-[#f97316]">{currentOrder.total.toFixed(2)} kr</span>
               </div>
             </div>
           </div>

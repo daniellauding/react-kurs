@@ -1,20 +1,19 @@
 import { Routes, Route } from 'react-router-dom'
-import MainLayout from '@/layouts/MainLayout'
-import MenuPage from '@/pages/MenuPage'
-import CartPage from '@/pages/CartPage'
-import OrderConfirmationPage from '@/pages/OrderConfirmationPage'
-import ReceiptPage from '@/pages/ReceiptPage'
+import { MenuPage } from '@/features/menu'
+import { CartPage } from '@/features/cart'
+import { OrderConfirmationPage, ReceiptPage } from '@/features/order'
+import InitializationWrapper from '@/components/InitializationWrapper'
 
 function App() {
   return (
-    <Routes>
-      <Route element={<MainLayout />}>
+    <InitializationWrapper>
+      <Routes>
         <Route path="/" element={<MenuPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/order" element={<OrderConfirmationPage />} />
         <Route path="/receipt" element={<ReceiptPage />} />
-      </Route>
-    </Routes>
+      </Routes>
+    </InitializationWrapper>
   )
 }
 

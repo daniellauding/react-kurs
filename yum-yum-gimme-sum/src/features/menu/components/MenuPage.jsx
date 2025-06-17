@@ -1,9 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { addToCart } from '../../../features/cart/store/cartSlice'
 import { useMenuItems } from '../hooks/useMenu'
 
 function MenuPage() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const { items: allItems, loading, error } = useMenuItems()
   const cartItems = useSelector(state => state.cart.items)
 
@@ -80,7 +82,10 @@ function MenuPage() {
 
         {/* Cart */}
         <div className="relative">
-          <div className="w-12 h-12 bg-white bg-opacity-80 rounded-lg flex items-center justify-center">
+          <div 
+            className="w-12 h-12 bg-white bg-opacity-80 rounded-lg flex items-center justify-center cursor-pointer hover:bg-opacity-90 transition-all"
+            onClick={() => navigate('/cart')}
+          >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-gray-700">
               <path
                 d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V17C17 18.1 17.9 19 19 19C20.1 19 21 18.1 21 17C21 15.9 20.1 15 19 15C17.9 15 17 15.9 17 17ZM9 19C10.1 19 11 18.1 11 17C11 15.9 10.1 15 9 15C7.9 15 7 15.9 7 17C7 18.1 7.9 19 9 19Z"

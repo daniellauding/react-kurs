@@ -70,6 +70,10 @@
     margin-bottom: 6px;
   }
   
+  .menu-dots[style*="borderBottomColor"] {
+    border-bottom: 2px dotted rgba(53, 49, 49, 1);
+  }
+  
   .dips-dots {
     border-bottom: 2px dotted #9ca3af;
     height: 1px;

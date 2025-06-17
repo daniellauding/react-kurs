@@ -1,25 +1,12 @@
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { updateQuantity, removeFromCart, clearCart } from '../store/cartSlice'
+import { updateQuantity } from '../store/cartSlice'
 import { useCartSummary } from '../hooks/useCart'
-import { MinusIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 
 function CartPage() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { items, total, isEmpty } = useCartSummary()
-
-  const handleUpdateQuantity = (id, quantity) => {
-    dispatch(updateQuantity({ id, quantity }))
-  }
-
-  const handleRemoveItem = (id) => {
-    dispatch(removeFromCart(id))
-  }
-
-  const handleClearCart = () => {
-    dispatch(clearCart())
-  }
 
   const handleCheckout = () => {
     if (!isEmpty) {
@@ -27,20 +14,57 @@ function CartPage() {
     }
   }
 
+  const handleRemoveOneItem = (itemId) => {
+    const item = items.find(item => item.id === itemId)
+    if (item) {
+      dispatch(updateQuantity({ id: itemId, quantity: item.quantity - 1 }))
+    }
+  }
+
+  // Expand items to show each individual item as separate row
+  const expandedItems = items.reduce((acc, item) => {
+    // Add each quantity as a separate row
+    for (let i = 0; i < item.quantity; i++) {
+      acc.push({
+        ...item,
+        quantity: 1,
+        displayPrice: item.price
+      })
+    }
+    return acc
+  }, [])
+
   if (isEmpty) {
     return (
-      <div className="container py-16">
+      <div 
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: 'rgba(238, 238, 238, 1)' }}
+      >
         <div className="text-center">
-          <div className="text-8xl mb-4">🛒</div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">Your cart is empty</h1>
-          <p className="text-gray-600 mb-8">
-            Add some delicious items from our menu to get started!
+          <div className="mb-4">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" className="mx-auto" style={{ color: 'rgba(53, 49, 49, 0.5)' }}>
+              <path
+                d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V17C17 18.1 17.9 19 19 19C20.1 19 21 18.1 21 17C21 15.9 20.1 15 19 15C17.9 15 17 15.9 17 17ZM9 19C10.1 19 11 18.1 11 17C11 15.9 10.1 15 9 15C7.9 15 7 15.9 7 17C7 18.1 7.9 19 9 19Z"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+            </svg>
+          </div>
+          <h1 className="text-3xl font-bold mb-4" style={{ color: 'rgba(53, 49, 49, 1)' }}>
+            Din varukorg är tom
+          </h1>
+          <p className="mb-8" style={{ color: 'rgba(53, 49, 49, 1)' }}>
+            Lägg till något gott från vår meny för att komma igång!
           </p>
           <button
             onClick={() => navigate('/')}
-            className="btn-primary"
+            className="px-6 py-3 rounded-lg font-bold text-white"
+            style={{ backgroundColor: 'rgba(53, 49, 49, 1)' }}
           >
-            Browse Menu
+            Bläddra i meny
           </button>
         </div>
       </div>
@@ -48,121 +72,76 @@ function CartPage() {
   }
 
   return (
-    <div className="container py-8">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Your Cart</h1>
-        <button
-          onClick={handleClearCart}
-          className="text-red-600 hover:text-red-700 flex items-center space-x-1"
+    <div 
+      className="min-h-screen"
+      style={{ backgroundColor: 'rgba(238, 238, 238, 1)' }}
+    >
+      {/* Header with Cart Icon */}
+      <div className="flex justify-end items-center p-4">
+        <div 
+          className="w-12 h-12 bg-white bg-opacity-80 rounded-lg flex items-center justify-center cursor-pointer hover:bg-opacity-90 transition-all"
+          onClick={() => navigate('/')}
         >
-          <TrashIcon className="h-5 w-5" />
-          <span>Clear Cart</span>
-        </button>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-gray-700">
+            <path
+              d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V17C17 18.1 17.9 19 19 19C20.1 19 21 18.1 21 17C21 15.9 20.1 15 19 15C17.9 15 17 15.9 17 17ZM9 19C10.1 19 11 18.1 11 17C11 15.9 10.1 15 9 15C7.9 15 7 15.9 7 17C7 18.1 7.9 19 9 19Z"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-8">
-        {/* Cart Items */}
-        <div className="lg:col-span-2">
-          <div className="space-y-4">
-            {items.map(item => (
-              <div key={item.id} className="card flex items-center space-x-4">
-                <div className="text-4xl">{item.image}</div>
-                
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-800">
-                    {item.name}
-                  </h3>
-                  <p className="text-gray-600 text-sm">
-                    {item.description}
-                  </p>
-                  <p className="text-[#f97316] font-bold">
-                    {item.price} kr
-                  </p>
-                </div>
-
-                <div className="flex items-center space-x-3">
-                  {/* Quantity Controls */}
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                      className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors"
-                    >
-                      <MinusIcon className="h-4 w-4" />
-                    </button>
-                    
-                    <span className="w-8 text-center font-semibold">
-                      {item.quantity}
-                    </span>
-                    
-                    <button
-                      onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                      className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors"
-                    >
-                      <PlusIcon className="h-4 w-4" />
-                    </button>
-                  </div>
-
-                  {/* Remove Button */}
-                  <button
-                    onClick={() => handleRemoveItem(item.id)}
-                    className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors"
-                  >
-                    <TrashIcon className="h-5 w-5" />
-                  </button>
-                </div>
-
-                <div className="text-right">
-                  <p className="text-lg font-bold text-gray-800">
-                    {(item.price * item.quantity).toFixed(2)} kr
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Order Summary */}
-        <div className="lg:col-span-1">
-          <div className="card sticky top-8">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Order Summary</h2>
-            
-            <div className="space-y-2 mb-4">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Subtotal</span>
-                <span className="font-semibold">{total.toFixed(2)} kr</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Delivery Fee</span>
-                <span className="font-semibold">39 kr</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Tax</span>
-                <span className="font-semibold">{(total * 0.08).toFixed(2)} kr</span>
-              </div>
-              <hr className="my-2" />
-              <div className="flex justify-between text-lg font-bold">
-                <span>Total</span>
-                <span className="text-[#f97316]">
-                  {(total + 39 + (total * 0.08)).toFixed(2)} kr
+      {/* Cart Items */}
+      <div className="px-4 pb-4">
+        <div className="space-y-1">
+          {expandedItems.map((item, index) => (
+            <div key={`${item.id}-${item.name}-${index}`} className="border-b border-gray-300 pb-2">
+              <div 
+                className="flex items-end w-full cursor-pointer hover:bg-gray-200 hover:bg-opacity-50 p-2 -m-2 rounded transition-colors"
+                onClick={() => handleRemoveOneItem(item.id)}
+              >
+                <h3 className="text-xl font-bold uppercase tracking-wide whitespace-nowrap" style={{ color: 'rgba(53, 49, 49, 1)' }}>
+                  {item.name}
+                </h3>
+                <div className="menu-dots flex-1 mx-4"></div>
+                <span className="text-xl font-bold whitespace-nowrap" style={{ color: 'rgba(53, 49, 49, 1)' }}>
+                  {item.displayPrice} SEK
                 </span>
               </div>
             </div>
+          ))}
+        </div>
 
-            <button
-              onClick={handleCheckout}
-              className="btn-primary w-full"
-            >
-              Proceed to Checkout
-            </button>
+      </div>
 
-            <button
-              onClick={() => navigate('/')}
-              className="btn-secondary w-full mt-2"
-            >
-              Continue Shopping
-            </button>
+      {/* Take My Money Button - Fixed Bottom */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 space-y-4" style={{ backgroundColor: 'rgba(238, 238, 238, 1)' }}>
+        {/* Total Section */}
+        <div 
+          className="p-4 rounded-lg"
+          style={{ backgroundColor: 'rgba(53, 49, 49, 0.24)' }}
+        >
+          <div className="flex items-end w-full">
+            <h3 className="text-xl font-bold uppercase tracking-wide whitespace-nowrap" style={{ color: 'rgba(53, 49, 49, 1)' }}>
+              TOTALT
+            </h3>
+            <div className="menu-dots flex-1 mx-4" style={{ borderBottomColor: 'rgba(53, 49, 49, 1)' }}></div>
+            <span className="text-xl font-bold whitespace-nowrap" style={{ color: 'rgba(53, 49, 49, 1)' }}>
+              {total} SEK
+            </span>
           </div>
         </div>
+
+        <button
+          onClick={handleCheckout}
+          className="w-full py-4 rounded-lg font-bold text-white text-lg uppercase tracking-wide"
+          style={{ backgroundColor: 'rgba(53, 49, 49, 1)' }}
+        >
+          TAKE MY MONEY!
+        </button>
       </div>
     </div>
   )
